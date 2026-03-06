@@ -1,0 +1,320 @@
+﻿<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<title>3D Nyelvtanuló Világ</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#020617;
+color:white;
+overflow-x:hidden;
+}
+
+/* 3D háttér */
+
+.background{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+overflow:hidden;
+}
+
+.shape{
+position:absolute;
+width:120px;
+height:120px;
+opacity:0.25;
+transform-style:preserve-3d;
+animation:spin 20s linear infinite;
+}
+
+.cube{
+background:linear-gradient(45deg,#3b82f6,#9333ea);
+}
+
+.sphere{
+border-radius:50%;
+background:radial-gradient(circle,#22c55e,#065f46);
+}
+
+.ring{
+border-radius:50%;
+border:10px solid #f59e0b;
+}
+
+.shape:nth-child(1){top:10%;left:10%}
+.shape:nth-child(2){top:70%;left:80%}
+.shape:nth-child(3){top:40%;left:60%}
+.shape:nth-child(4){top:80%;left:20%}
+.shape:nth-child(5){top:20%;left:75%}
+.shape:nth-child(6){top:50%;left:30%}
+.shape:nth-child(7){top:15%;left:50%}
+.shape:nth-child(8){top:65%;left:10%}
+
+@keyframes spin{
+0%{transform:rotateX(0) rotateY(0)}
+100%{transform:rotateX(360deg) rotateY(360deg)}
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:40px;
+}
+
+.card{
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(12px);
+padding:30px;
+border-radius:20px;
+margin-bottom:30px;
+box-shadow:0 0 30px rgba(0,0,0,0.6);
+transition:0.4s;
+}
+
+.card:hover{
+transform:rotateX(5deg) rotateY(5deg) scale(1.02);
+}
+
+button{
+padding:12px 20px;
+margin:5px;
+border:none;
+border-radius:10px;
+background:#6366f1;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#818cf8;
+}
+
+.word{
+font-size:32px;
+margin-top:20px;
+}
+
+input{
+padding:10px;
+border-radius:8px;
+border:none;
+width:60%;
+}
+
+.story{
+line-height:1.7;
+margin-top:15px;
+}
+
+.score{
+font-size:20px;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="background">
+<div class="shape cube"></div>
+<div class="shape cube"></div>
+<div class="shape sphere"></div>
+<div class="shape sphere"></div>
+<div class="shape ring"></div>
+<div class="shape ring"></div>
+<div class="shape cube"></div>
+<div class="shape sphere"></div>
+</div>
+
+<div class="container">
+
+<h1>🌍 3D Nyelvtanuló Világ</h1>
+
+<div class="card">
+
+<h2>📚 Szótanulás</h2>
+
+<button onclick="english()">Angol szó</button>
+<button onclick="german()">Német szó</button>
+<button onclick="speak()">🔊 Kiejtés</button>
+
+<div class="word" id="word">Kattints egy gombra</div>
+<div id="translation"></div>
+
+</div>
+
+<div class="card">
+
+<h2>🎮 Nagy Kvíz</h2>
+
+<div id="question"></div>
+
+<input id="answer">
+
+<br><br>
+
+<button onclick="check()">Válasz</button>
+<button onclick="next()">Következő kérdés</button>
+
+<div id="result"></div>
+
+<div class="score">
+Pont: <span id="score">0</span>
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>🎙️ Mesélő – A nyelvek története</h2>
+
+<button onclick="story()">Mesélő indítása</button>
+
+<div class="story" id="storyText">
+
+Az angol és a német nyelv a germán nyelvek családjába tartozik.
+
+Az angol nyelv eredete több mint 1500 évre nyúlik vissza.  
+A mai Anglia területére germán törzsek érkeztek: az anglok, a szászok és a jütök.  
+Ők hozták magukkal nyelvüket, amelyből kialakult az óangol.
+
+Az évszázadok során a nyelv sok más hatást kapott.  
+A vikingek például skandináv szavakat hoztak.  
+Később a normann hódítás után a francia nyelv hatása is erős lett.
+
+A német nyelv szintén germán eredetű.  
+A mai Németország, Ausztria és Svájc területén fejlődött ki.
+
+A középkorban sok dialektus létezett.  
+A modern német nyelvet nagyban befolyásolta Martin Luther bibliafordítása.
+
+Ma az angol a világ egyik legfontosabb nemzetközi nyelve.  
+A német pedig Európa egyik legnagyobb anyanyelve.
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let score=0
+
+const words=[
+["apple","alma"],
+["house","ház"],
+["water","víz"],
+["book","könyv"],
+["dog","kutya"],
+["cat","macska"],
+["friend","barát"],
+["school","iskola"],
+["food","étel"],
+["city","város"]
+]
+
+const germanWords=[
+["apfel","alma"],
+["haus","ház"],
+["wasser","víz"],
+["buch","könyv"],
+["hund","kutya"],
+["katze","macska"],
+["freund","barát"],
+["schule","iskola"],
+["essen","étel"],
+["stadt","város"]
+]
+
+const quiz=[
+
+["Mit jelent angolul: apple?","alma"],
+["Mit jelent angolul: house?","ház"],
+["Mit jelent angolul: dog?","kutya"],
+["Mit jelent németül: apfel?","alma"],
+["Mit jelent németül: haus?","ház"],
+["Mit jelent németül: hund?","kutya"],
+["Mit jelent angolul: water?","víz"],
+["Mit jelent németül: wasser?","víz"],
+["Mit jelent angolul: school?","iskola"],
+["Mit jelent németül: schule?","iskola"]
+
+]
+
+let q=0
+
+function next(){
+q=Math.floor(Math.random()*quiz.length)
+document.getElementById("question").innerText=quiz[q][0]
+document.getElementById("result").innerText=""
+}
+
+next()
+
+function check(){
+
+let a=document.getElementById("answer").value.toLowerCase()
+
+if(a==quiz[q][1]){
+
+score++
+document.getElementById("result").innerText="✅ Helyes!"
+document.getElementById("score").innerText=score
+
+}else{
+
+document.getElementById("result").innerText="❌ Helytelen. Helyes: "+quiz[q][1]
+
+}
+
+}
+
+function english(){
+
+let w=words[Math.floor(Math.random()*words.length)]
+
+document.getElementById("word").innerText=w[0]
+document.getElementById("translation").innerText=""
+
+}
+
+function german(){
+
+let w=germanWords[Math.floor(Math.random()*germanWords.length)]
+
+document.getElementById("word").innerText=w[0]
+document.getElementById("translation").innerText=""
+
+}
+
+function speak(){
+
+let text=document.getElementById("storyText").innerText
+
+let speech=new SpeechSynthesisUtterance(text)
+
+speech.lang="hu-HU"
+
+speechSynthesis.speak(speech)
+
+}
+
+function story(){
+
+speak()
+
+}
+
+</script>
+
+</body>
+</html>
